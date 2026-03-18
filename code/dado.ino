@@ -20,10 +20,9 @@ void setup() {
   display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
 
   pinMode(TitlPin, INPUT);
-  pinMode(ButtPin, INPUT);
+  pinMode(ButtPin, INPUT_PULLUP);
   pinMode(BuzzPin, OUTPUT);
 }
-  int dice = 20;
 
 void loop() {
   int result=0;
@@ -35,63 +34,55 @@ void loop() {
 
   bool teatrical=0;
 
-  int time=0;
+  int time;
+  int diff;
   
+  diff=millis()-time;
   if(!digitalRead(ButtPin))
     time=millis();
   else{
-    if(millis()-time>=2000){
+    if(diff>=2000){
       //shutdown();
     }
-    if(millis()-time>0){
-      time=0;
-      indDiceT=(indDiceT+1)%(nDices+1);
-      page=1;
-    }
+    else{
+			if(diff>10){
+				time=millis();
+				indDiceT=(indDiceT+1)%nDices;
+				page=1;
+			}
+		}
   }
+	
+	switch(page){
+		case 0:
+			if(!digitalRead(TitlPin)){
+				if(teatrical==1){
+					teatrical=0;
+					//TODO
+				}
+				else{
+					result=random(dice[indDice])+(dice[indDice]!=100);
 
-  if(page == 0){
-    if(!digitalRead(TitlPin)){
-      if(teatrical==1){
-        teatrical=0;
-        //TODO
-      }
-      else{
-        result=random(dice[indDice])+(dice[indDice]!=100);
-
-        display.clearDisplay();
-        display.setTextColor(SSD1306_WHITE);
-        display.setTextSize(9);
-        display.setCursor(45, 0);
-        if(result>9)
-          display.setCursor(14, 0);
-        display.println(String(result)); // Print text
-        display.display(); 
-        
-        delay(50);
-      }
-    }
-  }
-  else{
-    if(page==1){
-      if(indDice==nDices){
-        if(!digitalRead(TitlPin)){
-          page=0;
-          teatrical=1;
-          if(indDiceT!=nDices){
-            indDice=indDiceT;
-          }
-        }
-      }
-      else{
-        if(!digitalRead(TitlPin)){
-          page=0;
-          if(indDiceT!=nDices){
-            indDice=indDiceT;
-          }
-        }
-      }
-    }
-  }
+					display.clearDisplay();
+					display.setTextColor(SSD1306_WHITE);
+					display.setTextSize(9);
+					display.setCursor(45, 0);
+					if(result>9)
+						display.setCursor(14, 0);
+					display.println(String(result)); // Print text
+					display.display(); 
+					
+					delay(50);
+				}
+			}
+			break;
+			
+		case 1:
+			if(!digitalRead(TitlPin)){
+				page=0;	
+				indDice=indDiceT;
+			}
+			break;
+	}
 }
 
