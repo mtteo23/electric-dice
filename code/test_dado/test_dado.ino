@@ -11,6 +11,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 int TiltPin = 2;
 int ButPin = 3;
+int LedPin = 4;
 int BuzPin = 0;
 
 void setup() {
@@ -19,7 +20,9 @@ void setup() {
     Serial.println("Display not found");
   }
 
-  pinMode(TiltPin, INPUT);
+  pinMode(TiltPin, INPUT_PULLUP);
+  pinMode(ButPin, INPUT_PULLUP);
+  pinMode(LedPin, OUTPUT);
   
   
 }
@@ -42,9 +45,12 @@ void loop() {
 		Serial.println("button released");
 		message=message+"\nbutton released";
 	}
+	
+	digitalWrite(LedPin, HIGH);
+	
 	display.clearDisplay();
 	display.setTextColor(SSD1306_WHITE);
-	display.setTextSize(7);
+	display.setTextSize(1);
 	display.setCursor(0, 0);
 	display.println(message);
 	display.display(); 

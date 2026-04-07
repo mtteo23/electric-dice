@@ -12,23 +12,29 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 #define nDices 7
 
-int TitlPin=3;
-int ButtPin=0;
+int TitlPin=2;
+int ButtPin=3;
 int BuzzPin=0;
 
 void setup() {
   display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
 
-  pinMode(TitlPin, INPUT);
+  pinMode(TitlPin, INPUT_PULLUP);
   pinMode(ButtPin, INPUT_PULLUP);
   pinMode(BuzzPin, OUTPUT);
+  
+  display.clearDisplay();
+	display.setTextColor(SSD1306_WHITE);
+	display.setTextSize(2);
+	display.setCursor(20, 20);
+	display.println("electric\n  dice");
+	display.display();
 }
 
 void loop() {
   int result=0;
   int dice[]={4, 6, 8, 10, 12, 20, 100};
   int indDice=6;
-  int indDiceT=6;
 
   int page=0;
 
@@ -47,7 +53,7 @@ void loop() {
     else{
 			if(diff>10){
 				time=millis();
-				indDiceT=(indDiceT+1)%nDices;
+				indDice=(indDice+1)%nDices;
 				page=1;
 			}
 		}
@@ -56,7 +62,7 @@ void loop() {
 	switch(page){
 		case 0:
 			if(!digitalRead(TitlPin)){
-				if(teatrical==1){
+				if(teatrical){
 					teatrical=0;
 					//TODO
 				}
@@ -77,10 +83,15 @@ void loop() {
 			}
 			break;
 			
-		case 1:
+		case 1:			
+			display.clearDisplay();
+			display.setTextColor(SSD1306_WHITE);
+			display.setTextSize(2);
+			display.setCursor(0, 0);
+			display.println("electric\ndice");
+			display.display();
 			if(!digitalRead(TitlPin)){
-				page=0;	
-				indDice=indDiceT;
+				page=0;
 			}
 			break;
 	}
